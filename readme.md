@@ -1,16 +1,18 @@
 # README.md
 
-โค้ดชุดนี้เป็นสคริปต์ Bash ที่ใช้ในการดึงข้อมูลจาก HashiCorp Vault และสร้างไฟล์ environment ตามรายการคีย์ที่พบใน Vault โดยตรวจสอบเวอร์ชันและปรับปรุงเฉพาะไฟล์ที่มีเวอร์ชันใหม่ สคริปต์จะอ่านค่าจากไฟล์ `vault.env` ที่จำเป็นต้องมีเพื่อระบุตัวแปรแวดล้อมที่ใช้ในการเชื่อมต่อกับ Vault และกำหนดค่าต่างๆ ส่วนอื่น ๆ ของโค้ดจะดำเนินการดึงข้อมูลจาก Vault และสร้างไฟล์ environment โดยใช้ชื่อไฟล์และเนื้อหาที่ได้จาก Vault
+This code is a Bash script used to retrieve data from HashiCorp Vault and generate environment files based on the key list found in the Vault. It checks for new versions and only updates files with newer versions. The script reads values from the `vault.env` file, which is necessary to specify the environment variables used for connecting to the Vault and other configurations. The remaining parts of the code retrieve data from the Vault and generate environment files using the file names and content obtained from the Vault.
 
-ถ้าใช้ชื่อไฟล์ ที่ลงท้ายด้วย env จะสร้างไฟล์และข้อมูลข้างในให้เป็นในรูปแบบของ .env
-ตัวอย่างข้อมูล
+If a file has an 'env' extension, it will be created in the .env format. Here's an example of the file's content:
+
+```
 FIELD_NAME=VALUE
+```
 
-แต่ถ้าไม่ได้ลงท้าย env จะสร้างตามชื่อ แต่ข้อมูลข้างในจะเป็น Format json
+However, if a file does not have an 'env' extension, it will be created according to its name, but the content inside will be in JSON format.
 
 ## vault.env
 
-ไฟล์ `vault.env` เป็นไฟล์ที่จำเป็นต้องมีสำหรับการใช้งานสคริปต์นี้ เพื่อระบุค่าตัวแปรแวดล้อมที่จำเป็นในการเชื่อมต่อกับ HashiCorp Vault และการกำหนดค่าอื่น ๆ ต่อไปนี้เป็นตัวอย่างเนื้อหาในไฟล์ `vault.env`:
+The `vault.env` file is required to use this script. It specifies the necessary environment variables for connecting to HashiCorp Vault and other configurations. Here's an example of the content in the `vault.env` file:
 
 ```
 HOST=https://vault.test.com
@@ -20,18 +22,19 @@ PROJECT_PATH=api
 DESTINATION=folder-name
 ```
 
-คุณสามารถแก้ไขค่าในไฟล์ `vault.env` เพื่อให้ตรงกับการตั้งค่าของคุณเอง โดยกำหนดค่าต่าง ๆ ตามที่คุณต้องการให้สคริปต์สามารถเชื่อมต่อกับ Vault และสร้างไฟล์ environment ได้ถูกต้อง
+You can edit the values in the `vault.env` file to match your own configurations. Set the values according to your requirements for the script to connect to the Vault and generate the environment files correctly.
 
-## การใช้งาน
+## Usage
 
-1. นำโค้ดไปวางไว้ในโปรเจค
-2. ตรวจสอบและแก้ไขไฟล์ `vault.env` เพื่อตั้งค่า
-3. เปิดที่สคริปต์ใน Terminal หรือเครื่องมือที่ใช้งาน Bash
-4. เรียกใช้สคริปต์โดยใช้คำสั่ง `./vault.sh`
+1. Copy the code into your project.
+2. Check and edit the `vault.env` file to configure it.
+3. Open the script in a terminal or Bash-compatible tool.
+4. Run the script using the command `./vault.sh`.
 
-สคริปต์จะทำงานโดยดึงข้อมูลจาก HashiCorp Vault และสร้างไฟล์ environment ตามค่าที่คุณตั้งค่าในไฟล์ `vault.env` โดยจะตรวจสอบเวอร์ชันของไฟล์เพื่อค้นหาไฟล์ที่มีเวอร์ชันใหม่ และถ้าพบไฟล์ที่มีเวอร์ชันใหม่ สคริปต์จะแสดงข้อมูลใหม่ของไฟล์นั้น และให้คุณเลือกอัปเดตเวอร์ชันหรือไม่อัพเดต
+The script will retrieve data from HashiCorp Vault and generate environment files based on the configurations specified in the `vault.env` file. It will check for new versions of files and, if found, display the new data and prompt you to update the version.
 
-## ผู้จัดทำ
+## Author
 
-สคริปต์นี้ถูกสร้างขึ้นโดย ComdevX
+This script was created by ComdevX.
 Facebook: [https://www.facebook.com/devpairueai](https://www.facebook.com/devpairueai)
+Translate By: ChatGPT
