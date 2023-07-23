@@ -23,29 +23,40 @@ if ! command -v diff &>/dev/null; then
   exit 1
 fi
 
+ENV_FILE="vault.env"
+
 # Check if vault.env exists
-if [ ! -f vault.env ]; then
-  echo "Error: vault.env file not found." >&2
+if [ ! -f "$ENV_FILE" ]; then
+  echo "Error: $ENV_FILE file not found." >&2
   exit 1
 fi
 
 # Get environment variables from vault.env file
-TOKEN=$(grep TOKEN vault.env | cut -d '=' -f2)
-HOST=$(grep HOST vault.env | cut -d '=' -f2)
-PROJECT_NAME=$(grep PROJECT_NAME vault.env | cut -d '=' -f2)
-PROJECT_PATH=$(grep PROJECT_PATH vault.env | cut -d '=' -f2)
-DESTINATION=$(grep DESTINATION vault.env | cut -d '=' -f2)
+TOKEN=$(grep TOKEN $ENV_FILE | cut -d '=' -f2)
+HOST=$(grep HOST $ENV_FILE | cut -d '=' -f2)
+PROJECT_NAME=$(grep PROJECT_NAME $ENV_FILE | cut -d '=' -f2)
+PROJECT_PATH=$(grep PROJECT_PATH $ENV_FILE | cut -d '=' -f2)
+DESTINATION=$(grep DESTINATION $ENV_FILE | cut -d '=' -f2)
 
 # Check the destination directory if not empty and exists
 if [ ! -z "$DESTINATION" ] && [ ! -d "$DESTINATION" ]; then
-    echo "Error: Destination directory not found." >&2
-    exit 1
+  echo "Error: Destination directory not found." >&2
+  exit 1
 fi
 
 # Get list of keys from Vault
 URL_LIST="$HOST/v1/$PROJECT_NAME/metadata/$PROJECT_PATH/?list=true"
 TEMP_LIST=$(mktemp)
 curl --location $URL_LIST --header "X-Vault-Token: $TOKEN" >"$TEMP_LIST" 2>/dev/null
+
+# Get the error from the list
+ERROR=$(jq -r '.errors | .[]' $TEMP_LIST 2>/dev/null)
+
+# Check if the error is not empty or null
+if [ ! -z "$ERROR" ] || [ "$ERROR" = "null" ]; then
+  echo "Error: $ERROR" >&2
+  exit 1
+fi
 
 # Get the keys from the list
 KEY_LIST=$(jq -r '.data.keys | to_entries | .[] | .value' $TEMP_LIST 2>/dev/null)
